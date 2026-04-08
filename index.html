@@ -3,637 +3,271 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Han's Hiragana | 五十音</title>
+<title>Han's Kana | 日系現代五十音</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  /* Daytime palette — high brightness, low saturation */
-  --sky-top:    #ddeeff;
-  --sky-mid:    #eef5ff;
-  --sky-low:    #fdf8f2;
-  --ground:     #f5efe8;
-
-  /* Accent — muted, eye-friendly */
-  --accent:     #c0392b;        /* softer red */
-  --accent-lt:  rgba(192,57,43,0.08);
-  --ink:        #2c2c34;        /* near-black, not pure black */
-  --ink-mid:    #5a5a68;
-  --ink-dim:    #9090a0;
-
-  /* Glass cards */
-  --glass-bg:   rgba(255,255,255,0.65);
-  --glass-border: rgba(255,255,255,0.85);
-  --glass-shadow: 0 2px 16px rgba(80,80,120,0.10);
-
-  /* HUD */
-  --hud-bg:     rgba(255,255,255,0.78);
-  --hud-border: rgba(200,200,220,0.5);
+    /* 色彩定義 */
+    --sky-top: #c8e8ff;
+    --sky-low: #f5ece0;
+    --accent: #c0392b; 
+    --ink: #2c2c34;
+    --ink-mid: #5a5a68;
+    --ink-label: #34495e; /* 深靛藍權威色 */
+    
+    /* 強化版玻璃擬態：調高不透明度確保對比 */
+    --glass-bg: rgba(255, 255, 255, 0.85); 
+    --glass-border: rgba(255, 255, 255, 0.95);
+    --glass-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    
+    --hud-bg: rgba(255, 255, 255, 0.9);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html { scroll-behavior: smooth; }
 
 body {
-  min-height: 100vh;
-  font-family: 'Outfit', 'Noto Sans TC', sans-serif;
-  color: var(--ink);
-  overflow-x: hidden;
-  background: var(--sky-top);
+    min-height: 100vh;
+    font-family: 'Outfit', 'Noto Sans TC', sans-serif;
+    color: var(--ink);
+    background: var(--sky-top);
+    overflow-x: hidden;
 }
 
-/* ──────────────────────────────
-   BACKGROUND — daytime Shibuya
-   ────────────────────────────── */
-.scene {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
-
-/* Sky gradient — clear Tokyo daytime */
+/* ── 背景層次 ── */
+.scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
 .sky-layer {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    #c8e8ff 0%,
-    #ddeeff 25%,
-    #eef5ff 55%,
-    #fdf8f2 80%,
-    #f5ece0 100%
-  );
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, var(--sky-top) 0%, #eef5ff 45%, var(--sky-low) 100%);
 }
-
-/* Subtle cloud wisps */
-.clouds {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.cloud {
-  position: absolute;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.55);
-  filter: blur(28px);
-  animation: drift linear infinite;
-}
-@keyframes drift {
-  from { transform: translateX(0); }
-  to   { transform: translateX(120px); }
-}
-
-/* Ground / road plane */
-.ground-layer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 32%;
-  background: linear-gradient(
-    180deg,
-    #e8ddd0 0%,
-    #d8cfc4 40%,
-    #cec5b8 100%
-  );
-}
-
-/* Road asphalt center */
-.road-layer {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 52%;
-  height: 30%;
-  background: linear-gradient(180deg, #b0a898 0%, #9a9288 100%);
-  clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);
-}
-
-/* Crosswalk */
-.crosswalk {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 22%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  gap: 0;
-}
-.stripe {
-  height: 16px;
-  background: rgba(255,255,255,0.55);
-  margin-bottom: 12px;
-  border-radius: 1px;
-}
-
-/* Buildings silhouette — light, airy */
-.buildings {
-  position: absolute;
-  bottom: 28%;
-  left: 0;
-  right: 0;
-  height: 42%;
-  pointer-events: none;
-}
-.buildings svg { width: 100%; height: 100%; }
-
-/* ── RX-7 image ── */
 .car-scene {
-  position: absolute;
-  bottom: 22%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(480px, 80vw);
-  z-index: 2;
+    position: absolute; bottom: 15%; left: 50%;
+    transform: translateX(-50%); width: min(480px, 80vw); z-index: 1;
 }
-.car-img-wrap {
-  position: relative;
-  width: 100%;
-}
-.car-img-wrap img {
-  width: 100%;
-  height: auto;
-  display: block;
-  /* White-background image: multiply removes the white, keeps the car */
-  mix-blend-mode: multiply;
-  opacity: 0.92;
-  /* Feathered edges via mask — fades out at all four sides */
-  -webkit-mask-image: radial-gradient(
-    ellipse 88% 80% at 50% 55%,
-    black 40%,
-    rgba(0,0,0,0.85) 60%,
-    rgba(0,0,0,0.4) 78%,
-    transparent 100%
-  );
-  mask-image: radial-gradient(
-    ellipse 88% 80% at 50% 55%,
-    black 40%,
-    rgba(0,0,0,0.85) 60%,
-    rgba(0,0,0,0.4) 78%,
-    transparent 100%
-  );
+.car-scene img {
+    width: 100%; mix-blend-mode: multiply; opacity: 0.85;
+    -webkit-mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 40%, transparent 95%);
+    mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 40%, transparent 95%);
 }
 
-/* Ground shadow under car */
-.car-shadow {
-  position: absolute;
-  bottom: -4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 72%;
-  height: 18px;
-  background: radial-gradient(ellipse, rgba(80,60,40,0.22) 0%, transparent 70%);
-  filter: blur(6px);
-}
-
-/* ──────────────────────────────
-   HUD TOP BAR
-   ────────────────────────────── */
+/* ── HUD 頂欄 ── */
 .hud {
-  position: relative;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 13px 28px;
-  background: var(--hud-bg);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--hud-border);
-  box-shadow: 0 1px 12px rgba(100,100,140,0.08);
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 28px; background: var(--hud-bg);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
-.hud-logo {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 600;
-  font-size: 1.25rem;
-  letter-spacing: 0.04em;
-  color: var(--accent);
-}
-.hud-logo span {
-  color: var(--ink);
-  font-weight: 400;
-}
-.hud-clock { text-align: right; }
-.hud-time {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-  font-size: 1.45rem;
-  letter-spacing: 0.06em;
-  color: var(--ink);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-.hud-date {
-  font-size: 11px;
-  color: var(--ink-dim);
-  letter-spacing: 0.1em;
-  margin-top: 2px;
-}
+.hud-logo { font-weight: 600; font-size: 1.25rem; letter-spacing: 0.05em; color: var(--accent); }
+.hud-logo span { color: var(--ink); font-weight: 400; }
+.hud-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 500; color: var(--ink); }
 
-/* ──────────────────────────────
-   MAIN CONTENT
-   ────────────────────────────── */
-.main {
-  position: relative;
-  z-index: 10;
-  padding: 0 16px 60px;
-  max-width: 860px;
-  margin: 0 auto;
-}
+/* ── 主要內容 ── */
+.main { position: relative; z-index: 10; padding: 0 16px 60px; max-width: 860px; margin: 0 auto; }
 
-/* Tabs */
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 6px;
-  padding: 22px 0 4px;
-  flex-wrap: wrap;
-}
+/* 頁籤切換 */
+.tabs { display: flex; justify-content: center; gap: 8px; padding: 24px 0 10px; flex-wrap: wrap; }
 .tab {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 400;
-  font-size: 0.88rem;
-  letter-spacing: 0.06em;
-  padding: 7px 20px;
-  border-radius: 20px;
-  border: 1.5px solid rgba(150,150,180,0.25);
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  color: var(--ink-mid);
-  cursor: pointer;
-  transition: all 0.2s;
+    font-family: 'Outfit', sans-serif; font-size: 0.9rem; padding: 8px 22px; border-radius: 25px;
+    border: 1.5px solid rgba(0,0,0,0.1); background: var(--glass-bg);
+    color: var(--ink-mid); cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tab:hover { border-color: rgba(192,57,43,0.3); color: var(--accent); }
-.tab.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-  font-weight: 500;
-}
+.tab.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(192,57,43,0.2); }
 
-/* Controls */
-.controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 0 18px;
-  flex-wrap: wrap;
-}
+/* 控制項 */
+.controls { display: flex; justify-content: center; gap: 12px; padding: 10px 0 20px; min-height: 60px; }
 .ctrl-btn {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 400;
-  font-size: 0.88rem;
-  letter-spacing: 0.04em;
-  padding: 8px 20px;
-  border-radius: 20px;
-  border: 1.5px solid rgba(150,150,180,0.3);
-  background: var(--glass-bg);
-  backdrop-filter: blur(10px);
-  color: var(--ink-mid);
-  cursor: pointer;
-  transition: all 0.2s;
+    padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.08);
+    background: #fff; cursor: pointer; font-size: 0.85rem; color: var(--ink-mid);
+    transition: 0.2s;
 }
-.ctrl-btn:hover {
-  border-color: rgba(192,57,43,0.35);
-  color: var(--accent);
-  background: rgba(255,255,255,0.85);
-}
-.ctrl-btn.active {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #fff;
-}
+.ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* Section label */
+/* ── 五十音網格 ── */
 .section-label {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 500;
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  color: var(--ink-dim);
-  text-align: center;
-  margin-bottom: 10px;
-  text-transform: uppercase;
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.85rem;
+    letter-spacing: 0.15em; color: var(--ink-label); /* 深靛藍提升對比 */
+    text-align: center; margin: 30px 0 15px; text-transform: uppercase;
 }
-
-/* ── Kana grid ── */
-.kana-section { margin-bottom: 22px; }
-.kana-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 7px;
-}
+.kana-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .kana-cell {
-  background: var(--glass-bg);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 12px 6px 10px;
-  text-align: center;
-  box-shadow: var(--glass-shadow);
-  transition: border-color 0.2s, transform 0.15s, box-shadow 0.15s;
-  cursor: default;
+    background: var(--glass-bg); backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border); border-radius: 14px;
+    padding: 16px 4px; text-align: center; transition: all 0.3s ease;
+    box-shadow: var(--glass-shadow);
 }
-.kana-cell:hover {
-  border-color: rgba(192,57,43,0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(80,80,120,0.13);
+.kana-cell.highlight { 
+    border-color: var(--accent); 
+    background: #fff; 
+    transform: scale(1.05); 
+    box-shadow: 0 8px 24px rgba(192,57,43,0.15); 
 }
-.kana-cell.empty {
-  background: transparent;
-  border-color: transparent;
-  box-shadow: none;
-  pointer-events: none;
-}
-.kana-char {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 1.65rem;
-  font-weight: 300;
-  color: var(--ink);
-  line-height: 1;
-  display: block;
-}
-.kana-roman {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 400;
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  color: var(--accent);
-  margin-top: 6px;
-  display: block;
-  transition: opacity 0.22s;
-  min-height: 13px;
-}
+.kana-char { font-family: 'Noto Sans JP', sans-serif; font-size: 1.8rem; font-weight: 300; color: var(--ink); display: block; }
+.kana-roman { font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: var(--accent); margin-top: 6px; display: block; min-height: 15px; transition: 0.2s; }
 .kana-roman.hidden { opacity: 0; }
+.kana-cell.empty { background: transparent; border: none; box-shadow: none; pointer-events: none; }
 
-/* Scanline — very subtle, daytime version */
-.scanlines {
-  position: fixed;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: repeating-linear-gradient(
-    to bottom,
-    transparent 0px,
-    transparent 5px,
-    rgba(120,120,160,0.015) 5px,
-    rgba(120,120,160,0.015) 6px
-  );
+/* ── 對照模式專用樣式 ── */
+.comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.comp-card { 
+    display: flex; align-items: center; justify-content: space-between; 
+    padding: 12px 20px; flex-direction: row; 
+}
+.comp-sub { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.comp-type { font-size: 0.65rem; color: var(--ink-label); font-weight: 600; opacity: 0.6; }
+
+@media (max-width: 480px) {
+    .comp-grid { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<div class="scanlines"></div>
-
-<!-- ── Background scene ── -->
 <div class="scene">
-  <div class="sky-layer"></div>
-
-  <!-- Cloud wisps -->
-  <div class="clouds">
-    <div class="cloud" style="width:320px;height:80px;left:5%;top:8%;animation-duration:90s;animation-delay:0s;opacity:0.8"></div>
-    <div class="cloud" style="width:200px;height:55px;left:55%;top:5%;animation-duration:120s;animation-delay:-30s;opacity:0.6"></div>
-    <div class="cloud" style="width:260px;height:65px;left:25%;top:14%;animation-duration:100s;animation-delay:-60s;opacity:0.7"></div>
-    <div class="cloud" style="width:180px;height:45px;left:72%;top:18%;animation-duration:80s;animation-delay:-20s;opacity:0.5"></div>
-  </div>
-
-  <!-- Buildings skyline — light watercolor-style silhouette -->
-  <div class="buildings">
-    <svg viewBox="0 0 1200 400" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="bldGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(180,185,210,0.55)"/>
-          <stop offset="100%" stop-color="rgba(160,165,195,0.35)"/>
-        </linearGradient>
-        <linearGradient id="bldGrad2" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="rgba(195,198,218,0.40)"/>
-          <stop offset="100%" stop-color="rgba(175,178,200,0.25)"/>
-        </linearGradient>
-      </defs>
-      <!-- Far buildings — very muted, fog -->
-      <rect fill="url(#bldGrad2)" x="0"    y="200" width="90"  height="200"/>
-      <rect fill="url(#bldGrad2)" x="80"   y="160" width="55"  height="240"/>
-      <rect fill="url(#bldGrad2)" x="130"  y="220" width="70"  height="180"/>
-      <rect fill="url(#bldGrad2)" x="195"  y="140" width="45"  height="260"/>
-      <rect fill="url(#bldGrad2)" x="235"  y="190" width="80"  height="210"/>
-      <rect fill="url(#bldGrad2)" x="310"  y="170" width="55"  height="230"/>
-      <rect fill="url(#bldGrad2)" x="360"  y="130" width="35"  height="270"/>
-      <!-- Shibuya 109 suggestion center -->
-      <rect fill="url(#bldGrad)"  x="490"  y="100" width="60"  height="300"/>
-      <rect fill="url(#bldGrad)"  x="545"  y="120" width="110" height="280"/>
-      <!-- right side -->
-      <rect fill="url(#bldGrad2)" x="840"  y="155" width="65"  height="245"/>
-      <rect fill="url(#bldGrad2)" x="900"  y="130" width="50"  height="270"/>
-      <rect fill="url(#bldGrad2)" x="945"  y="180" width="80"  height="220"/>
-      <rect fill="url(#bldGrad2)" x="1020" y="140" width="55"  height="260"/>
-      <rect fill="url(#bldGrad2)" x="1070" y="170" width="70"  height="230"/>
-      <rect fill="url(#bldGrad2)" x="1135" y="120" width="65"  height="280"/>
-      <!-- Window hints — very faint -->
-      <rect fill="rgba(220,230,255,0.3)" x="498" y="115" width="8"  height="5" rx="1"/>
-      <rect fill="rgba(220,230,255,0.3)" x="512" y="115" width="8"  height="5" rx="1"/>
-      <rect fill="rgba(220,230,255,0.3)" x="498" y="128" width="8"  height="5" rx="1"/>
-      <rect fill="rgba(220,230,255,0.3)" x="512" y="128" width="8"  height="5" rx="1"/>
-      <rect fill="rgba(220,230,255,0.3)" x="560" y="135" width="10" height="6" rx="1"/>
-      <rect fill="rgba(220,230,255,0.3)" x="578" y="135" width="10" height="6" rx="1"/>
-      <rect fill="rgba(220,230,255,0.3)" x="596" y="135" width="10" height="6" rx="1"/>
-    </svg>
-  </div>
-
-  <div class="ground-layer"></div>
-  <div class="road-layer"></div>
-
-  <!-- Crosswalk -->
-  <div class="crosswalk">
-    <div class="stripe"></div>
-    <div class="stripe"></div>
-    <div class="stripe"></div>
-    <div class="stripe"></div>
-  </div>
-
-  <!-- RX-7 image -->
-  <div class="car-scene">
-    <div class="car-img-wrap">
-      <div class="car-shadow"></div>
-      <img src="rx7.png" alt="Han's RX-7" draggable="false"/>
-    </div>
-  </div>
+    <div class="sky-layer"></div>
+    <div class="car-scene"><img src="rx7.png" alt="Car Background"></div>
 </div>
 
-<!-- ── HUD ── -->
 <div class="hud">
-  <div class="hud-logo">Han's <span>五十音</span></div>
-  <div class="hud-clock">
+    <div class="hud-logo">HAN'S <span>五十音</span></div>
     <div class="hud-time" id="clock">00:00:00</div>
-    <div class="hud-date" id="date-display">---</div>
-  </div>
 </div>
 
-<!-- ── Main ── -->
 <div class="main">
-
-  <div class="tabs">
-    <button class="tab active" onclick="showSection('seion')">清音</button>
-    <button class="tab" onclick="showSection('dakuten')">濁音</button>
-    <button class="tab" onclick="showSection('youon')">拗音</button>
-  </div>
-
-  <div class="controls">
-    <button class="ctrl-btn" id="toggle-btn" onclick="toggleRomaji()">🔤 遮蔽讀音</button>
-    <button class="ctrl-btn" onclick="highlightRandom()">🎲 隨機考驗</button>
-    <button class="ctrl-btn" onclick="clearHighlight()">✕ 清除</button>
-  </div>
-
-  <!-- Seion -->
-  <div id="section-seion">
-    <div class="kana-section"><div class="section-label">あ行 · A</div><div class="kana-grid" id="grid-a"></div></div>
-    <div class="kana-section"><div class="section-label">か行 · Ka</div><div class="kana-grid" id="grid-ka"></div></div>
-    <div class="kana-section"><div class="section-label">さ行 · Sa</div><div class="kana-grid" id="grid-sa"></div></div>
-    <div class="kana-section"><div class="section-label">た行 · Ta</div><div class="kana-grid" id="grid-ta"></div></div>
-    <div class="kana-section"><div class="section-label">な行 · Na</div><div class="kana-grid" id="grid-na"></div></div>
-    <div class="kana-section"><div class="section-label">は行 · Ha</div><div class="kana-grid" id="grid-ha"></div></div>
-    <div class="kana-section"><div class="section-label">ま行 · Ma</div><div class="kana-grid" id="grid-ma"></div></div>
-    <div class="kana-section"><div class="section-label">や行 · Ya</div><div class="kana-grid" id="grid-ya"></div></div>
-    <div class="kana-section"><div class="section-label">ら行 · Ra</div><div class="kana-grid" id="grid-ra"></div></div>
-    <div class="kana-section"><div class="section-label">わ行 · Wa + ん</div><div class="kana-grid" id="grid-wa"></div></div>
-  </div>
-
-  <!-- Dakuten -->
-  <div id="section-dakuten" style="display:none">
-    <div class="kana-section"><div class="section-label">が行 · Ga</div><div class="kana-grid" id="grid-ga"></div></div>
-    <div class="kana-section"><div class="section-label">ざ行 · Za</div><div class="kana-grid" id="grid-za"></div></div>
-    <div class="kana-section"><div class="section-label">だ行 · Da</div><div class="kana-grid" id="grid-da"></div></div>
-    <div class="kana-section"><div class="section-label">ば行 · Ba</div><div class="kana-grid" id="grid-ba"></div></div>
-    <div class="kana-section"><div class="section-label">ぱ行 · Pa（半濁音）</div><div class="kana-grid" id="grid-pa"></div></div>
-  </div>
-
-  <!-- Youon -->
-  <div id="section-youon" style="display:none">
-    <div class="kana-section">
-      <div class="section-label">拗音 · Combined sounds</div>
-      <div class="kana-grid" style="grid-template-columns:repeat(3,1fr)" id="grid-youon"></div>
+    <div class="tabs">
+        <button class="tab active" onclick="switchMode('hira')">平假名</button>
+        <button class="tab" onclick="switchMode('kata')">片假名</button>
+        <button class="tab" onclick="switchMode('both')">同步對照</button>
     </div>
-  </div>
 
+    <div class="controls">
+        <button class="ctrl-btn" onclick="toggleRomaji()">🔤 遮蔽讀音</button>
+        <button class="ctrl-btn" id="rand-btn" onclick="highlightRandom()">🎲 隨機考驗</button>
+    </div>
+
+    <div id="content-area"></div>
 </div>
 
 <script>
-// ── Data ──
-const seionRows = {
-  a:  [{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}],
-  ka: [{k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'}],
-  sa: [{k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'}],
-  ta: [{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'と',r:'to'}],
-  na: [{k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'}],
-  ha: [{k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'}],
-  ma: [{k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'}],
-  ya: [{k:'や',r:'ya'},{k:'',r:''},{k:'ゆ',r:'yu'},{k:'',r:''},{k:'よ',r:'yo'}],
-  ra: [{k:'ら',r:'ra'},{k:'り',r:'ri'},{k:'る',r:'ru'},{k:'れ',r:'re'},{k:'ろ',r:'ro'}],
-  wa: [{k:'わ',r:'wa'},{k:'',r:''},{k:'',r:''},{k:'',r:''},{k:'を',r:'wo'},{k:'ん',r:'n'},{k:'',r:''},{k:'',r:''},{k:'',r:''},{k:''}]
+// 數據定義
+const kanaData = {
+    rows: ["a","ka","sa","ta","na","ha","ma","ya","ra","wa"],
+    labels: ["あ行 · A", "か行 · Ka", "さ行 · Sa", "た行 · Ta", "な行 · Na", "は行 · Ha", "ま行 · Ma", "や行 · Ya", "ら行 · Ra", "わ行 · Wa"],
+    hira: {
+        a: [{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}],
+        ka:[{k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'}],
+        sa:[{k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'}],
+        ta:[{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'止',r:'to'}],
+        na:[{k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'}],
+        ha:[{k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'}],
+        ma:[{k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'}],
+        ya:[{k:'や',r:'ya'},{k:'',r:''},{k:'ゆ',r:'yu'},{k:'',r:''},{k:'よ',r:'yo'}],
+        ra:[{k:'ら',r:'ra'},{k:'り',r:'ri'},{k:'る',r:'ru'},{k:'れ',r:'re'},{k:'ろ',r:'ro'}],
+        wa:[{k:'わ',r:'wa'},{k:'',r:''},{k:'',r:''},{k:'',r:''},{k:'を',r:'wo'}]
+    },
+    kata: {
+        a: [{k:'ア',r:'a'},{k:'イ',r:'i'},{k:'ウ',r:'u'},{k:'エ',r:'e'},{k:'オ',r:'o'}],
+        ka:[{k:'カ',r:'ka'},{k:'キ',r:'ki'},{k:'ク',r:'ku'},{k:'ケ',r:'ke'},{k:'コ',r:'ko'}],
+        sa:[{k:'サ',r:'sa'},{k:'シ',r:'shi'},{k:'ス',r:'su'},{k:'セ',r:'se'},{k:'ソ',r:'so'}],
+        ta:[{k:'タ',r:'ta'},{k:'チ',r:'chi'},{k:'ツ',r:'tsu'},{k:'テ',r:'te'},{k:'ト',r:'to'}],
+        na:[{k:'ナ',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'}],
+        ha:[{k:'ハ',r:'ha'},{k:'ヒ',r:'hi'},{k:'フ',r:'fu'},{k:'ヘ',r:'he'},{k:'ホ',r:'ho'}],
+        ma:[{k:'マ',r:'ma'},{k:'ミ',r:'mi'},{k:'ム',r:'mu'},{k:'メ',r:'me'},{k:'モ',r:'mo'}],
+        ya:[{k:'ヤ',r:'ya'},{k:'',r:''},{k:'ユ',r:'yu'},{k:'',r:''},{k:'ヨ',r:'yo'}],
+        ra:[{k:'ラ',r:'ra'},{k:'リ',r:'ri'},{k:'ル',r:'ru'},{k:'レ',r:'re'},{k:'ロ',r:'ro'}],
+        wa:[{k:'ワ',r:'wa'},{k:'',r:''},{k:'',r:''},{k:'',r:''},{k:'ヲ',r:'wo'}]
+    }
 };
-const dakutenRows = {
-  ga: [{k:'が',r:'ga'},{k:'ぎ',r:'gi'},{k:'ぐ',r:'gu'},{k:'げ',r:'ge'},{k:'ご',r:'go'}],
-  za: [{k:'ざ',r:'za'},{k:'じ',r:'ji'},{k:'ず',r:'zu'},{k:'ぜ',r:'ze'},{k:'ぞ',r:'zo'}],
-  da: [{k:'だ',r:'da'},{k:'ぢ',r:'di'},{k:'づ',r:'du'},{k:'で',r:'de'},{k:'ど',r:'do'}],
-  ba: [{k:'ば',r:'ba'},{k:'び',r:'bi'},{k:'ぶ',r:'bu'},{k:'べ',r:'be'},{k:'ぼ',r:'bo'}],
-  pa: [{k:'ぱ',r:'pa'},{k:'ぴ',r:'pi'},{k:'ぷ',r:'pu'},{k:'ぺ',r:'pe'},{k:'ぽ',r:'po'}]
-};
-const youonList = [
-  {k:'きゃ',r:'kya'},{k:'きゅ',r:'kyu'},{k:'きょ',r:'kyo'},
-  {k:'しゃ',r:'sha'},{k:'しゅ',r:'shu'},{k:'しょ',r:'sho'},
-  {k:'ちゃ',r:'cha'},{k:'ちゅ',r:'chu'},{k:'ちょ',r:'cho'},
-  {k:'にゃ',r:'nya'},{k:'にゅ',r:'nyu'},{k:'にょ',r:'nyo'},
-  {k:'ひゃ',r:'hya'},{k:'ひゅ',r:'hyu'},{k:'ひょ',r:'hyo'},
-  {k:'みゃ',r:'mya'},{k:'みゅ',r:'myu'},{k:'みょ',r:'myo'},
-  {k:'りゃ',r:'rya'},{k:'りゅ',r:'ryu'},{k:'りょ',r:'ryo'},
-  {k:'ぎゃ',r:'gya'},{k:'ぎゅ',r:'gyu'},{k:'ぎょ',r:'gyo'},
-  {k:'じゃ',r:'ja'},{k:'じゅ',r:'ju'},{k:'じょ',r:'jo'},
-  {k:'びゃ',r:'bya'},{k:'びゅ',r:'byu'},{k:'びょ',r:'byo'},
-  {k:'ぴゃ',r:'pya'},{k:'ぴゅ',r:'pyu'},{k:'ぴょ',r:'pyo'}
-];
 
+let currentMode = 'hira'; // hira, kata, both
 let showRomaji = true;
+let lastHighlighted = null;
 
-function buildCell(item) {
-  const cell = document.createElement('div');
-  if (!item.k) { cell.className = 'kana-cell empty'; return cell; }
-  cell.className = 'kana-cell';
-  cell.dataset.kana = item.k;
-  cell.innerHTML = `<span class="kana-char">${item.k}</span><span class="kana-roman${showRomaji ? '' : ' hidden'}">${item.r}</span>`;
-  return cell;
+function switchMode(mode) {
+    currentMode = mode;
+    // 更新頁籤 UI
+    document.querySelectorAll('.tab').forEach(t => {
+        t.classList.toggle('active', 
+            (mode === 'hira' && t.innerText === '平假名') || 
+            (mode === 'kata' && t.innerText === '片假名') || 
+            (mode === 'both' && t.innerText === '同步對照')
+        );
+    });
+    
+    // 對照模式不提供隨機考驗
+    document.getElementById('rand-btn').style.display = mode === 'both' ? 'none' : 'inline-block';
+    
+    render();
 }
-function buildGrid(id, items) {
-  const g = document.getElementById(id);
-  if (!g) return;
-  g.innerHTML = '';
-  items.forEach(item => g.appendChild(buildCell(item)));
+
+function render() {
+    const area = document.getElementById('content-area');
+    area.innerHTML = '';
+    
+    kanaData.rows.forEach((rowKey, index) => {
+        const section = document.createElement('div');
+        section.className = 'kana-section';
+        section.innerHTML = `<div class="section-label">${kanaData.labels[index]}</div>`;
+        
+        const grid = document.createElement('div');
+        grid.className = currentMode === 'both' ? 'comp-grid' : 'kana-grid';
+        
+        kanaData.hira[rowKey].forEach((hItem, idx) => {
+            const kItem = kanaData.kata[rowKey][idx];
+            
+            if (currentMode === 'both') {
+                if (!hItem.k) return; // 跳過空位
+                const cell = document.createElement('div');
+                cell.className = 'kana-cell comp-card';
+                cell.innerHTML = `
+                    <div class="comp-sub"><span class="comp-type">平</span><span class="kana-char">${hItem.k}</span></div>
+                    <div class="kana-roman ${showRomaji ? '' : 'hidden'}">${hItem.r}</div>
+                    <div class="comp-sub"><span class="comp-type">片</span><span class="kana-char">${kItem.k}</span></div>
+                `;
+                grid.appendChild(cell);
+            } else {
+                const target = currentMode === 'hira' ? hItem : kItem;
+                const cell = document.createElement('div');
+                cell.className = target.k ? 'kana-cell' : 'kana-cell empty';
+                if (target.k) {
+                    cell.innerHTML = `
+                        <span class="kana-char">${target.k}</span>
+                        <span class="kana-roman ${showRomaji ? '' : 'hidden'}">${target.r}</span>
+                    `;
+                }
+                grid.appendChild(cell);
+            }
+        });
+        
+        section.appendChild(grid);
+        area.appendChild(section);
+    });
 }
 
-Object.entries(seionRows).forEach(([k,v]) => buildGrid('grid-'+k, v));
-Object.entries(dakutenRows).forEach(([k,v]) => buildGrid('grid-'+k, v));
-buildGrid('grid-youon', youonList);
-
-// ── Toggle romaji ──
 function toggleRomaji() {
-  showRomaji = !showRomaji;
-  const btn = document.getElementById('toggle-btn');
-  btn.textContent = showRomaji ? '🔤 遮蔽讀音' : '👁 顯示讀音';
-  btn.classList.toggle('active', !showRomaji);
-  document.querySelectorAll('.kana-roman').forEach(el => el.classList.toggle('hidden', !showRomaji));
+    showRomaji = !showRomaji;
+    document.querySelectorAll('.kana-roman').forEach(el => el.classList.toggle('hidden', !showRomaji));
 }
 
-// ── Section tabs ──
-function showSection(name) {
-  ['seion','dakuten','youon'].forEach(s => {
-    document.getElementById('section-'+s).style.display = s === name ? 'block' : 'none';
-  });
-  document.querySelectorAll('.tab').forEach((t,i) => {
-    t.classList.toggle('active', ['seion','dakuten','youon'][i] === name);
-  });
-}
-
-// ── Random highlight ──
-let highlighted = null;
 function highlightRandom() {
-  clearHighlight();
-  const cells = Array.from(document.querySelectorAll('.kana-cell:not(.empty)'));
-  if (!cells.length) return;
-  const pick = cells[Math.floor(Math.random()*cells.length)];
-  pick.style.borderColor = 'var(--accent)';
-  pick.style.boxShadow = '0 0 0 3px rgba(192,57,43,0.18)';
-  pick.style.background = 'rgba(192,57,43,0.06)';
-  highlighted = pick;
-  pick.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-function clearHighlight() {
-  if (highlighted) {
-    highlighted.style.borderColor = '';
-    highlighted.style.boxShadow = '';
-    highlighted.style.background = '';
-    highlighted = null;
-  }
+    if (lastHighlighted) lastHighlighted.classList.remove('highlight');
+    const cells = Array.from(document.querySelectorAll('.kana-cell:not(.empty):not(.comp-card)'));
+    if (cells.length === 0) return;
+    
+    const pick = cells[Math.floor(Math.random() * cells.length)];
+    pick.classList.add('highlight');
+    pick.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    lastHighlighted = pick;
 }
 
-// ── Clock ──
-const weekdays = ['日','一','二','三','四','五','六'];
 function updateClock() {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const s = String(now.getSeconds()).padStart(2,'0');
-  document.getElementById('clock').textContent = `${h}:${m}:${s}`;
-  document.getElementById('date-display').textContent =
-    `${now.getFullYear()} · ${now.getMonth()+1}/${String(now.getDate()).padStart(2,'0')} 週${weekdays[now.getDay()]}`;
+    const now = new Date();
+    document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB', { hour12: false });
 }
-updateClock();
+
 setInterval(updateClock, 1000);
+updateClock();
+switchMode('hira'); // 初始化
 </script>
 </body>
 </html>

@@ -3,24 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Han's Kana | 滿版精緻五十音</title>
+<title>Han's Kana | 滿版沈浸五十音</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-    --sky-top: #c8e8ff;
     --accent: #c0392b; 
     --ink: #1a1a1e;
     --ink-mid: #4a4a55;
     --ink-label: #34495e; /* 深靛藍權威色 */
+    --copper: #b87333; /* 銅字邊框色 */
     
-    /* 高對比玻璃擬態 */
-    --glass-bg: rgba(255, 255, 255, 0.92); /* 調高不透明度 */
-    --glass-border: rgba(255, 255, 255, 1);
-    --hud-bg: rgba(255, 255, 255, 0.95);
-    
-    /* 銅色調 */
-    --bronze-border: #b87333;
-    --bronze-bg: rgba(184, 115, 51, 0.08);
+    /* 極致對比玻璃擬態 */
+    --glass-bg: rgba(255, 255, 255, 0.9); 
+    --glass-border: rgba(255, 255, 255, 0.95);
+    --hud-bg: rgba(255, 255, 255, 0.92);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,15 +26,23 @@ body {
     min-height: 100vh;
     font-family: 'Outfit', 'Noto Sans TC', sans-serif;
     color: var(--ink);
-    background: var(--sky-top);
+    background: #f0f4f8; /* 底色 */
+    overflow-x: hidden;
 }
 
 /* ── 滿版背景 ── */
-.scene { position: fixed; inset: 0; z-index: 0; }
+.scene { 
+    position: fixed; 
+    inset: 0; 
+    z-index: -1; 
+}
 .full-bg-img {
-    width: 100%; height: 100%;
-    object-fit: cover; object-position: center;
-    opacity: 0.85; mix-blend-mode: multiply;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    opacity: 0.85;
+    mix-blend-mode: multiply;
 }
 
 /* ── HUD 頂欄 ── */
@@ -46,7 +50,7 @@ body {
     position: sticky; top: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
     padding: 14px 28px; background: var(--hud-bg);
-    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(0,0,0,0.1);
 }
 .hud-logo { font-weight: 600; font-size: 1.25rem; letter-spacing: 0.05em; color: var(--accent); }
@@ -56,45 +60,48 @@ body {
 /* ── 主要內容 ── */
 .main { position: relative; z-index: 10; padding: 20px 16px 80px; max-width: 900px; margin: 0 auto; }
 
-.tabs { display: flex; justify-content: center; gap: 10px; padding-bottom: 15px; flex-wrap: wrap; }
+/* 頁籤 */
+.tabs { display: flex; justify-content: center; gap: 10px; padding: 20px 0 10px; flex-wrap: wrap; }
 .tab {
-    font-family: 'Outfit', sans-serif; padding: 10px 24px; border-radius: 30px;
-    border: 1px solid rgba(0,0,0,0.1); background: var(--glass-bg);
+    font-family: 'Outfit', sans-serif; padding: 8px 24px; border-radius: 30px;
+    border: 1.5px solid rgba(0,0,0,0.1); background: var(--glass-bg);
     color: var(--ink-mid); cursor: pointer; transition: 0.3s;
 }
 .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 4px 15px rgba(192,57,43,0.3); }
 
+/* 控制項 */
 .controls { display: flex; justify-content: center; gap: 12px; padding-bottom: 25px; min-height: 50px; }
 .ctrl-btn {
-    padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1);
-    background: var(--glass-bg); cursor: pointer; font-size: 0.88rem; color: var(--ink-mid);
+    padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1);
+    background: #fff; cursor: pointer; font-size: 0.85rem; color: var(--ink-mid);
+    transition: 0.2s;
 }
+.ctrl-btn:hover { border-color: var(--copper); color: var(--copper); }
 
-/* ── 銅字標籤 (Section Label) ── */
+/* ── 銅字卡標題樣式 ── */
 .section-label {
+    display: inline-block;
     font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.85rem;
-    letter-spacing: 0.25em; color: var(--ink-label);
-    text-align: center; text-transform: uppercase;
-    
-    /* 銅字卡設計 */
-    width: fit-content; margin: 45px auto 20px;
-    padding: 6px 20px;
-    background: var(--bronze-bg);
-    border: 1.5px solid var(--bronze-border);
+    letter-spacing: 0.2em; color: var(--ink-label); 
+    padding: 4px 16px;
+    margin: 40px auto 20px;
+    border: 1px solid var(--copper); /* 銅色邊框 */
     border-radius: 4px;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    background: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+    position: relative;
+    left: 50%; transform: translateX(-50%);
 }
 
-/* ── 網格與卡片 ── */
+/* ── 網格系統 ── */
 .kana-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 .kana-cell {
     background: var(--glass-bg); 
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
     border: 1px solid var(--glass-border); 
     border-radius: 16px;
-    padding: 22px 4px; text-align: center; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 22px 4px; text-align: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 .kana-cell.highlight { 
     border-color: var(--accent); 
@@ -102,16 +109,19 @@ body {
     transform: translateY(-8px) scale(1.02); 
     box-shadow: 0 15px 35px rgba(192,57,43,0.25); 
 }
-.kana-char { font-family: 'Noto Sans JP', sans-serif; font-size: 2rem; font-weight: 300; display: block; color: var(--ink); }
-.kana-roman { font-family: 'Outfit', sans-serif; font-size: 0.85rem; color: var(--accent); margin-top: 8px; display: block; min-height: 18px; }
+.kana-char { font-family: 'Noto Sans JP', sans-serif; font-size: 2rem; font-weight: 300; display: block; }
+.kana-roman { font-family: 'Outfit', sans-serif; font-size: 0.8rem; color: var(--accent); margin-top: 8px; display: block; min-height: 16px; }
 .kana-roman.hidden { opacity: 0; }
 .kana-cell.empty { background: transparent; border: none; box-shadow: none; pointer-events: none; }
 
-/* ── 對照模式專用 ── */
+/* 同步對照模式樣式 */
 .comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-.comp-card { display: flex; align-items: center; justify-content: space-around; padding: 18px 25px; }
+.comp-card { 
+    display: flex; align-items: center; justify-content: space-around; 
+    padding: 15px 25px; background: rgba(255,255,255,0.92);
+}
 .comp-sub { display: flex; flex-direction: column; align-items: center; }
-.comp-type { font-size: 0.7rem; color: var(--ink-label); font-weight: 600; opacity: 0.6; margin-bottom: 4px; text-transform: uppercase; }
+.comp-type { font-size: 0.65rem; color: var(--copper); font-weight: 600; margin-bottom: 2px; }
 
 @media (max-width: 500px) {
     .kana-grid { gap: 8px; }
@@ -209,9 +219,9 @@ function render() {
                 const cell = document.createElement('div');
                 cell.className = 'kana-cell comp-card';
                 cell.innerHTML = `
-                    <div class="comp-sub"><span class="comp-type">Hira</span><span class="kana-char">${hItem.k}</span></div>
+                    <div class="comp-sub"><span class="comp-type">平</span><span class="kana-char">${hItem.k}</span></div>
                     <div class="kana-roman ${showRomaji ? '' : 'hidden'}">${hItem.r}</div>
-                    <div class="comp-sub"><span class="comp-type">Kata</span><span class="kana-char">${kItem.k}</span></div>
+                    <div class="comp-sub"><span class="comp-type">片</span><span class="kana-char">${kItem.k}</span></div>
                 `;
                 grid.appendChild(cell);
             } else {
@@ -219,10 +229,7 @@ function render() {
                 const cell = document.createElement('div');
                 cell.className = target.k ? 'kana-cell' : 'kana-cell empty';
                 if (target.k) {
-                    cell.innerHTML = `
-                        <span class="kana-char">${target.k}</span>
-                        <span class="kana-roman ${showRomaji ? '' : 'hidden'}">${target.r}</span>
-                    `;
+                    cell.innerHTML = `<span class="kana-char">${target.k}</span><span class="kana-roman ${showRomaji ? '' : 'hidden'}">${target.r}</span>`;
                 }
                 grid.appendChild(cell);
             }

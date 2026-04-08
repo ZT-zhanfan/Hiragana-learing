@@ -3,24 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Han's Kana | 日系現代五十音</title>
+<title>Han's Kana | 滿版日系現代五十音</title>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Noto+Sans+JP:wght@300;400;500&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-    /* 色彩定義 */
     --sky-top: #c8e8ff;
-    --sky-low: #f5ece0;
     --accent: #c0392b; 
-    --ink: #2c2c34;
-    --ink-mid: #5a5a68;
+    --ink: #1a1a1e;
+    --ink-mid: #4a4a55;
     --ink-label: #34495e; /* 深靛藍權威色 */
     
-    /* 強化版玻璃擬態：調高不透明度確保對比 */
-    --glass-bg: rgba(255, 255, 255, 0.85); 
-    --glass-border: rgba(255, 255, 255, 0.95);
-    --glass-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    
-    --hud-bg: rgba(255, 255, 255, 0.9);
+    /* 強化玻璃擬態：滿版背景下，模糊度與白平衡至關重要 */
+    --glass-bg: rgba(255, 255, 255, 0.88); 
+    --glass-border: rgba(255, 255, 255, 0.9);
+    --hud-bg: rgba(255, 255, 255, 0.92);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,101 +27,114 @@ body {
     font-family: 'Outfit', 'Noto Sans TC', sans-serif;
     color: var(--ink);
     background: var(--sky-top);
-    overflow-x: hidden;
 }
 
-/* ── 背景層次 ── */
-.scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
-.sky-layer {
-    position: absolute; inset: 0;
-    background: linear-gradient(180deg, var(--sky-top) 0%, #eef5ff 45%, var(--sky-low) 100%);
+/* ── 滿版背景圖片修正 ── */
+.scene { 
+    position: fixed; 
+    inset: 0; 
+    z-index: 0; 
 }
-.car-scene {
-    position: absolute; bottom: 15%; left: 50%;
-    transform: translateX(-50%); width: min(480px, 80vw); z-index: 1;
-}
-.car-scene img {
-    width: 100%; mix-blend-mode: multiply; opacity: 0.85;
-    -webkit-mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 40%, transparent 95%);
-    mask-image: radial-gradient(ellipse 85% 80% at 50% 50%, black 40%, transparent 95%);
+.full-bg-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 關鍵：確保圖片滿版且不變形 */
+    object-position: center; /* 圖片對齊中心 */
+    opacity: 0.8; /* 稍微降低透明度，讓天空底色透出來，增加層次 */
+    mix-blend-mode: multiply; /* 維持 Claude 的日系手繪融合感 */
+    filter: saturate(1.1);
 }
 
 /* ── HUD 頂欄 ── */
 .hud {
-    position: sticky; top: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 12px 28px; background: var(--hud-bg);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    position: sticky; 
+    top: 0; 
+    z-index: 100;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    padding: 14px 28px; 
+    background: var(--hud-bg);
+    backdrop-filter: blur(25px); /* 提高模糊度 */
+    -webkit-backdrop-filter: blur(25px);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
 }
 .hud-logo { font-weight: 600; font-size: 1.25rem; letter-spacing: 0.05em; color: var(--accent); }
 .hud-logo span { color: var(--ink); font-weight: 400; }
-.hud-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 500; color: var(--ink); }
+.hud-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 500; }
 
 /* ── 主要內容 ── */
-.main { position: relative; z-index: 10; padding: 0 16px 60px; max-width: 860px; margin: 0 auto; }
-
-/* 頁籤切換 */
-.tabs { display: flex; justify-content: center; gap: 8px; padding: 24px 0 10px; flex-wrap: wrap; }
-.tab {
-    font-family: 'Outfit', sans-serif; font-size: 0.9rem; padding: 8px 22px; border-radius: 25px;
-    border: 1.5px solid rgba(0,0,0,0.1); background: var(--glass-bg);
-    color: var(--ink-mid); cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.main { 
+    position: relative; 
+    z-index: 10; 
+    padding: 20px 16px 80px; 
+    max-width: 900px; 
+    margin: 0 auto; 
 }
-.tab.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 4px 12px rgba(192,57,43,0.2); }
+
+/* 頁籤 */
+.tabs { display: flex; justify-content: center; gap: 10px; padding-bottom: 15px; flex-wrap: wrap; }
+.tab {
+    font-family: 'Outfit', sans-serif; padding: 10px 24px; border-radius: 30px;
+    border: 1px solid rgba(0,0,0,0.1); background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    color: var(--ink-mid); cursor: pointer; transition: 0.3s;
+}
+.tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
 
 /* 控制項 */
-.controls { display: flex; justify-content: center; gap: 12px; padding: 10px 0 20px; min-height: 60px; }
+.controls { display: flex; justify-content: center; gap: 12px; padding-bottom: 25px; }
 .ctrl-btn {
-    padding: 8px 18px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.08);
-    background: #fff; cursor: pointer; font-size: 0.85rem; color: var(--ink-mid);
-    transition: 0.2s;
+    padding: 8px 20px; border-radius: 20px; border: 1px solid rgba(0,0,0,0.1);
+    background: var(--glass-bg); cursor: pointer; font-size: 0.88rem; color: var(--ink-mid);
+    backdrop-filter: blur(5px);
 }
-.ctrl-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* ── 五十音網格 ── */
+/* ── 網格系統 ── */
 .section-label {
-    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.85rem;
-    letter-spacing: 0.15em; color: var(--ink-label); /* 深靛藍提升對比 */
-    text-align: center; margin: 30px 0 15px; text-transform: uppercase;
+    font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.9rem;
+    letter-spacing: 0.2em; color: var(--ink-label); /* 深靛藍提升 */
+    text-align: center; margin: 40px 0 15px; text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8); /* 增加白影確保在滿版圖上更清晰 */
 }
-.kana-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.kana-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
 .kana-cell {
-    background: var(--glass-bg); backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border); border-radius: 14px;
-    padding: 16px 4px; text-align: center; transition: all 0.3s ease;
-    box-shadow: var(--glass-shadow);
+    background: var(--glass-bg); 
+    backdrop-filter: blur(15px); /* 滿版背景下，增加模糊度防止背景雜亂 */
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid var(--glass-border); 
+    border-radius: 16px;
+    padding: 20px 4px; text-align: center; transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 .kana-cell.highlight { 
     border-color: var(--accent); 
     background: #fff; 
-    transform: scale(1.05); 
-    box-shadow: 0 8px 24px rgba(192,57,43,0.15); 
+    transform: translateY(-5px); 
+    box-shadow: 0 12px 30px rgba(192,57,43,0.2); 
 }
-.kana-char { font-family: 'Noto Sans JP', sans-serif; font-size: 1.8rem; font-weight: 300; color: var(--ink); display: block; }
-.kana-roman { font-family: 'Outfit', sans-serif; font-size: 0.75rem; color: var(--accent); margin-top: 6px; display: block; min-height: 15px; transition: 0.2s; }
+.kana-char { font-family: 'Noto Sans JP', sans-serif; font-size: 1.9rem; font-weight: 300; display: block; }
+.kana-roman { font-family: 'Outfit', sans-serif; font-size: 0.8rem; color: var(--accent); margin-top: 8px; display: block; min-height: 16px; }
 .kana-roman.hidden { opacity: 0; }
 .kana-cell.empty { background: transparent; border: none; box-shadow: none; pointer-events: none; }
 
-/* ── 對照模式專用樣式 ── */
-.comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.comp-card { 
-    display: flex; align-items: center; justify-content: space-between; 
-    padding: 12px 20px; flex-direction: row; 
-}
-.comp-sub { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-.comp-type { font-size: 0.65rem; color: var(--ink-label); font-weight: 600; opacity: 0.6; }
+/* 同步對照模式樣式 */
+.comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+.comp-card { display: flex; align-items: center; justify-content: space-around; padding: 15px 25px; }
+.comp-sub { display: flex; flex-direction: column; align-items: center; }
+.comp-type { font-size: 0.7rem; color: var(--ink-label); font-weight: 600; opacity: 0.5; margin-bottom: 4px; }
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
+    .kana-grid { gap: 8px; }
     .comp-grid { grid-template-columns: 1fr; }
+    .kana-char { font-size: 1.6rem; }
 }
 </style>
 </head>
 <body>
 
 <div class="scene">
-    <div class="sky-layer"></div>
-    <div class="car-scene"><img src="rx7.png" alt="Car Background"></div>
+    <img src="rx7.png" class="full-bg-img" alt="Background">
 </div>
 
 <div class="hud">
@@ -149,7 +158,6 @@ body {
 </div>
 
 <script>
-// 數據定義
 const kanaData = {
     rows: ["a","ka","sa","ta","na","ha","ma","ya","ra","wa"],
     labels: ["あ行 · A", "か行 · Ka", "さ行 · Sa", "た行 · Ta", "な行 · Na", "は行 · Ha", "ま行 · Ma", "や行 · Ya", "ら行 · Ra", "わ行 · Wa"],
@@ -157,7 +165,7 @@ const kanaData = {
         a: [{k:'あ',r:'a'},{k:'い',r:'i'},{k:'う',r:'u'},{k:'え',r:'e'},{k:'お',r:'o'}],
         ka:[{k:'か',r:'ka'},{k:'き',r:'ki'},{k:'く',r:'ku'},{k:'け',r:'ke'},{k:'こ',r:'ko'}],
         sa:[{k:'さ',r:'sa'},{k:'し',r:'shi'},{k:'す',r:'su'},{k:'せ',r:'se'},{k:'そ',r:'so'}],
-        ta:[{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'止',r:'to'}],
+        ta:[{k:'た',r:'ta'},{k:'ち',r:'chi'},{k:'つ',r:'tsu'},{k:'て',r:'te'},{k:'と',r:'to'}],
         na:[{k:'な',r:'na'},{k:'に',r:'ni'},{k:'ぬ',r:'nu'},{k:'ね',r:'ne'},{k:'の',r:'no'}],
         ha:[{k:'は',r:'ha'},{k:'ひ',r:'hi'},{k:'ふ',r:'fu'},{k:'へ',r:'he'},{k:'ほ',r:'ho'}],
         ma:[{k:'ま',r:'ma'},{k:'み',r:'mi'},{k:'む',r:'mu'},{k:'め',r:'me'},{k:'も',r:'mo'}],
@@ -170,7 +178,7 @@ const kanaData = {
         ka:[{k:'カ',r:'ka'},{k:'キ',r:'ki'},{k:'ク',r:'ku'},{k:'ケ',r:'ke'},{k:'コ',r:'ko'}],
         sa:[{k:'サ',r:'sa'},{k:'シ',r:'shi'},{k:'ス',r:'su'},{k:'セ',r:'se'},{k:'ソ',r:'so'}],
         ta:[{k:'タ',r:'ta'},{k:'チ',r:'chi'},{k:'ツ',r:'tsu'},{k:'テ',r:'te'},{k:'ト',r:'to'}],
-        na:[{k:'ナ',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'}],
+        na:[{k:'納',r:'na'},{k:'ニ',r:'ni'},{k:'ヌ',r:'nu'},{k:'ネ',r:'ne'},{k:'ノ',r:'no'}],
         ha:[{k:'ハ',r:'ha'},{k:'ヒ',r:'hi'},{k:'フ',r:'fu'},{k:'ヘ',r:'he'},{k:'ホ',r:'ho'}],
         ma:[{k:'マ',r:'ma'},{k:'ミ',r:'mi'},{k:'ム',r:'mu'},{k:'メ',r:'me'},{k:'モ',r:'mo'}],
         ya:[{k:'ヤ',r:'ya'},{k:'',r:''},{k:'ユ',r:'yu'},{k:'',r:''},{k:'ヨ',r:'yo'}],
@@ -179,13 +187,12 @@ const kanaData = {
     }
 };
 
-let currentMode = 'hira'; // hira, kata, both
+let currentMode = 'hira';
 let showRomaji = true;
 let lastHighlighted = null;
 
 function switchMode(mode) {
     currentMode = mode;
-    // 更新頁籤 UI
     document.querySelectorAll('.tab').forEach(t => {
         t.classList.toggle('active', 
             (mode === 'hira' && t.innerText === '平假名') || 
@@ -193,30 +200,22 @@ function switchMode(mode) {
             (mode === 'both' && t.innerText === '同步對照')
         );
     });
-    
-    // 對照模式不提供隨機考驗
     document.getElementById('rand-btn').style.display = mode === 'both' ? 'none' : 'inline-block';
-    
     render();
 }
 
 function render() {
     const area = document.getElementById('content-area');
     area.innerHTML = '';
-    
     kanaData.rows.forEach((rowKey, index) => {
         const section = document.createElement('div');
-        section.className = 'kana-section';
         section.innerHTML = `<div class="section-label">${kanaData.labels[index]}</div>`;
-        
         const grid = document.createElement('div');
         grid.className = currentMode === 'both' ? 'comp-grid' : 'kana-grid';
-        
         kanaData.hira[rowKey].forEach((hItem, idx) => {
             const kItem = kanaData.kata[rowKey][idx];
-            
             if (currentMode === 'both') {
-                if (!hItem.k) return; // 跳過空位
+                if (!hItem.k) return;
                 const cell = document.createElement('div');
                 cell.className = 'kana-cell comp-card';
                 cell.innerHTML = `
@@ -230,15 +229,11 @@ function render() {
                 const cell = document.createElement('div');
                 cell.className = target.k ? 'kana-cell' : 'kana-cell empty';
                 if (target.k) {
-                    cell.innerHTML = `
-                        <span class="kana-char">${target.k}</span>
-                        <span class="kana-roman ${showRomaji ? '' : 'hidden'}">${target.r}</span>
-                    `;
+                    cell.innerHTML = `<span class="kana-char">${target.k}</span><span class="kana-roman ${showRomaji ? '' : 'hidden'}">${target.r}</span>`;
                 }
                 grid.appendChild(cell);
             }
         });
-        
         section.appendChild(grid);
         area.appendChild(section);
     });
@@ -253,7 +248,6 @@ function highlightRandom() {
     if (lastHighlighted) lastHighlighted.classList.remove('highlight');
     const cells = Array.from(document.querySelectorAll('.kana-cell:not(.empty):not(.comp-card)'));
     if (cells.length === 0) return;
-    
     const pick = cells[Math.floor(Math.random() * cells.length)];
     pick.classList.add('highlight');
     pick.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -261,13 +255,11 @@ function highlightRandom() {
 }
 
 function updateClock() {
-    const now = new Date();
-    document.getElementById('clock').innerText = now.toLocaleTimeString('en-GB', { hour12: false });
+    document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB', { hour12: false });
 }
-
 setInterval(updateClock, 1000);
 updateClock();
-switchMode('hira'); // 初始化
+switchMode('hira');
 </script>
 </body>
 </html>
